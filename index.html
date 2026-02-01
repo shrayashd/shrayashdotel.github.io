@@ -71,12 +71,9 @@
         }
 
         .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
             position: relative;
-            height: 80px;
+            width: 100%;
+            height: 200px;
         }
 
         .btn {
@@ -93,6 +90,10 @@
         .yes-btn {
             background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
             color: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .yes-btn:hover {
@@ -104,7 +105,8 @@
             background: linear-gradient(45deg, #6c757d, #8d9498);
             color: white;
             position: absolute;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
+            pointer-events: auto;
         }
 
         .flowers {
@@ -199,43 +201,38 @@
         // Create hearts continuously
         setInterval(createHeart, 800);
 
-        let mouseX = 0, mouseY = 0;
-        
-        // Track mouse movement
+        // Track mouse movement and repel NO button
         document.addEventListener('mousemove', function(e) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            repelButton();
-        });
-        
-        // Repel NO button like opposite magnets
-        function repelButton() {
             const noBtn = document.getElementById('noBtn');
             const container = document.querySelector('.buttons');
             const containerRect = container.getBoundingClientRect();
+            
+            const mouseX = e.clientX - containerRect.left;
+            const mouseY = e.clientY - containerRect.top;
+            
             const btnRect = noBtn.getBoundingClientRect();
+            const btnX = btnRect.left - containerRect.left + btnRect.width / 2;
+            const btnY = btnRect.top - containerRect.top + btnRect.height / 2;
             
-            const btnCenterX = btnRect.left + btnRect.width / 2;
-            const btnCenterY = btnRect.top + btnRect.height / 2;
+            const distance = Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
             
-            const distance = Math.sqrt(Math.pow(mouseX - btnCenterX, 2) + Math.pow(mouseY - btnCenterY, 2));
-            
-            if (distance < 150) {
-                const angle = Math.atan2(btnCenterY - mouseY, btnCenterX - mouseX);
-                const force = Math.max(0, 150 - distance) / 3;
+            if (distance < 100) {
+                const angle = Math.atan2(btnY - mouseY, btnX - mouseX);
+                const force = (100 - distance) * 2;
                 
-                const newX = btnCenterX + Math.cos(angle) * force - containerRect.left - btnRect.width / 2;
-                const newY = btnCenterY + Math.sin(angle) * force - containerRect.top - btnRect.height / 2;
+                let newX = btnX + Math.cos(angle) * force - btnRect.width / 2;
+                let newY = btnY + Math.sin(angle) * force - btnRect.height / 2;
                 
-                const maxX = containerRect.width - btnRect.width;
-                const maxY = containerRect.height - btnRect.height;
+                // Keep button within container bounds
+                newX = Math.max(0, Math.min(containerRect.width - btnRect.width, newX));
+                newY = Math.max(0, Math.min(containerRect.height - btnRect.height, newY));
                 
-                noBtn.style.left = Math.max(0, Math.min(maxX, newX)) + 'px';
-                noBtn.style.top = Math.max(0, Math.min(maxY, newY)) + 'px';
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
             }
-        }
+        });
         
-        // Move button on click
+        // Move button on click attempt
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const container = document.querySelector('.buttons');
@@ -260,12 +257,11 @@
             }
         }
 
-        // Initialize NO button position
+        // Initialize button positions
         window.onload = function() {
             const noBtn = document.getElementById('noBtn');
-            noBtn.style.position = 'absolute';
-            noBtn.style.right = '0px';
-            noBtn.style.top = '0px';
+            noBtn.style.right = '20px';
+            noBtn.style.top = '20px';
         };
     </script>
 </body>
