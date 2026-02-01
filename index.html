@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💕 For Amisha 💕</title>
+    <title>💕 Hey LOVE 💕</title>
     <style>
         * {
             margin: 0;
@@ -171,7 +171,7 @@
         
         <div class="buttons">
             <button class="btn yes-btn" onclick="sayYes()">YES! 💕</button>
-            <button class="btn no-btn" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO 😢</button>
+            <button class="btn no-btn" id="noBtn" onclick="moveButton()">NO 😢</button>
         </div>
         
         <div class="success" id="success">
@@ -199,7 +199,43 @@
         // Create hearts continuously
         setInterval(createHeart, 800);
 
-        // Move the NO button
+        let mouseX = 0, mouseY = 0;
+        
+        // Track mouse movement
+        document.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            repelButton();
+        });
+        
+        // Repel NO button like opposite magnets
+        function repelButton() {
+            const noBtn = document.getElementById('noBtn');
+            const container = document.querySelector('.buttons');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+            
+            const distance = Math.sqrt(Math.pow(mouseX - btnCenterX, 2) + Math.pow(mouseY - btnCenterY, 2));
+            
+            if (distance < 150) {
+                const angle = Math.atan2(btnCenterY - mouseY, btnCenterX - mouseX);
+                const force = Math.max(0, 150 - distance) / 3;
+                
+                const newX = btnCenterX + Math.cos(angle) * force - containerRect.left - btnRect.width / 2;
+                const newY = btnCenterY + Math.sin(angle) * force - containerRect.top - btnRect.height / 2;
+                
+                const maxX = containerRect.width - btnRect.width;
+                const maxY = containerRect.height - btnRect.height;
+                
+                noBtn.style.left = Math.max(0, Math.min(maxX, newX)) + 'px';
+                noBtn.style.top = Math.max(0, Math.min(maxY, newY)) + 'px';
+            }
+        }
+        
+        // Move button on click
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const container = document.querySelector('.buttons');
@@ -208,18 +244,8 @@
             const maxX = containerRect.width - noBtn.offsetWidth;
             const maxY = containerRect.height - noBtn.offsetHeight;
             
-            const newX = Math.random() * maxX;
-            const newY = Math.random() * maxY;
-            
-            noBtn.style.left = newX + 'px';
-            noBtn.style.top = newY + 'px';
-            
-            // Make the button smaller each time
-            const currentSize = parseFloat(noBtn.style.fontSize) || 1.2;
-            if (currentSize > 0.5) {
-                noBtn.style.fontSize = (currentSize - 0.1) + 'rem';
-                noBtn.style.padding = (15 - (1.2 - currentSize) * 10) + 'px ' + (30 - (1.2 - currentSize) * 20) + 'px';
-            }
+            noBtn.style.left = Math.random() * maxX + 'px';
+            noBtn.style.top = Math.random() * maxY + 'px';
         }
 
         // Handle YES button
