@@ -97,7 +97,7 @@
         }
 
         .yes-btn:hover {
-            transform: scale(1.1);
+            transform: translate(-50%, -50%) scale(1.1);
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
         }
 
@@ -105,7 +105,7 @@
             background: linear-gradient(45deg, #6c757d, #8d9498);
             color: white;
             position: absolute;
-            transition: all 0.1s ease;
+            transition: none;
             pointer-events: auto;
         }
 
@@ -216,9 +216,9 @@
             
             const distance = Math.sqrt(Math.pow(mouseX - btnX, 2) + Math.pow(mouseY - btnY, 2));
             
-            if (distance < 100) {
+            if (distance < 120) {
                 const angle = Math.atan2(btnY - mouseY, btnX - mouseX);
-                const force = (100 - distance) * 2;
+                const force = (120 - distance) * 4;
                 
                 let newX = btnX + Math.cos(angle) * force - btnRect.width / 2;
                 let newY = btnY + Math.sin(angle) * force - btnRect.height / 2;
